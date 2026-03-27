@@ -5,3 +5,7 @@
 .RDataTmp
 data/GSE63060_non-normalized.txt
 data/GSE63061_non-normalized.txt
+data/GSE63060_series_matrix.txt
+data/GSE63061_series_matrix.txt
+results
+plots
