@@ -1,0 +1,9 @@
+tidyverse
+here
+rio
+data.table
+GEOquery
+limma
+sva
+AnnotationDbi
+org.Hs.eg.db
