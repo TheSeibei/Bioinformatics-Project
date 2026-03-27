@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-.RDataTmp
+.RDataTmp*
 data/GSE63060_non-normalized.txt
 data/GSE63061_non-normalized.txt
 data/GSE63060_series_matrix.txt
