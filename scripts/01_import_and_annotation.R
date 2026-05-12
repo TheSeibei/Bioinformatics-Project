@@ -55,11 +55,11 @@ dir.create(scriptsdir, showWarnings = FALSE)
 message("Project root detected by here(): ", here())
 
 # ---- input files ----
-raw_file_63060 <- here("data", "GSE63060_non-normalized.txt")
-raw_file_63061 <- here("data", "GSE63061_non-normalized.txt")
+raw_file_63060 <- here(datadir, "GSE63060_non-normalized.txt")
+raw_file_63061 <- here(datadir, "GSE63061_non-normalized.txt")
 
-series_file_63060 <- here("data", "GSE63060_series_matrix.txt")
-series_file_63061 <- here("data", "GSE63061_series_matrix.txt")
+series_file_63060 <- here(datadir, "GSE63060_series_matrix.txt")
+series_file_63061 <- here(datadir, "GSE63061_series_matrix.txt")
 
 stopifnot(file.exists(raw_file_63060))
 stopifnot(file.exists(raw_file_63061))
@@ -327,24 +327,24 @@ sample_map_63061 <- phenoData_63061 %>%
   tibble::rownames_to_column("SAMPLEID") %>%
   dplyr::select(SAMPLEID, GSM, GROUP, BATCH, STUDY, PLATFORM)
 
-rio::export(sample_map_63060, here("results", "sample_map_63060.csv"))
-rio::export(sample_map_63061, here("results", "sample_map_63061.csv"))
+rio::export(sample_map_63060, here(resultsdir, "sample_map_63060.csv"))
+rio::export(sample_map_63061, here(resultsdir, "sample_map_63061.csv"))
 
 # ---- save intermediate objects ----
-saveRDS(assayData_63060, here("results", "assayData_63060_raw.rds"))
-saveRDS(assayData_63061, here("results", "assayData_63061_raw.rds"))
+saveRDS(assayData_63060, here(resultsdir, "assayData_63060_raw.rds"))
+saveRDS(assayData_63061, here(resultsdir, "assayData_63061_raw.rds"))
 
-saveRDS(phenoData_63060, here("results", "phenoData_63060_raw.rds"))
-saveRDS(phenoData_63061, here("results", "phenoData_63061_raw.rds"))
+saveRDS(phenoData_63060, here(resultsdir, "phenoData_63060_raw.rds"))
+saveRDS(phenoData_63061, here(resultsdir, "phenoData_63061_raw.rds"))
 
 rio::export(
   tibble::rownames_to_column(phenoData_63060, "ROWNAME"),
-  here("results", "phenoData_63060_raw.csv")
+  here(resultsdir, "phenoData_63060_raw.csv")
 )
 
 rio::export(
   tibble::rownames_to_column(phenoData_63061, "ROWNAME"),
-  here("results", "phenoData_63061_raw.csv")
+  here(resultsdir, "phenoData_63061_raw.csv")
 )
 
 message("Finished 01_import_and_annotation.R")

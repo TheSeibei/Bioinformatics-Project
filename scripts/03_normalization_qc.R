@@ -163,14 +163,14 @@ collapse_to_symbol <- function(expr_mat, feature_df, dataset_name = "dataset") {
 # ---- load data ----
 message("Loading annotated assay, feature, and pheno data...")
 
-assayData_63060 <- readRDS(here("results", "assayData_63060_annotated.rds"))
-assayData_63061 <- readRDS(here("results", "assayData_63061_annotated.rds"))
+assayData_63060 <- readRDS(here(resultsdir, "assayData_63060_annotated.rds"))
+assayData_63061 <- readRDS(here(resultsdir, "assayData_63061_annotated.rds"))
 
-featureData_63060 <- readRDS(here("results", "featureData_63060.rds"))
-featureData_63061 <- readRDS(here("results", "featureData_63061.rds"))
+featureData_63060 <- readRDS(here(resultsdir, "featureData_63060.rds"))
+featureData_63061 <- readRDS(here(resultsdir, "featureData_63061.rds"))
 
-phenoData_63060 <- readRDS(here("results", "phenoData_63060_raw.rds"))
-phenoData_63061 <- readRDS(here("results", "phenoData_63061_raw.rds"))
+phenoData_63060 <- readRDS(here(resultsdir, "phenoData_63060_raw.rds"))
+phenoData_63061 <- readRDS(here(resultsdir, "phenoData_63061_raw.rds"))
 
 # ---- sanity checks ----
 stopifnot(identical(rownames(assayData_63060), rownames(featureData_63060)))
@@ -186,25 +186,25 @@ message("GSE63061 assay: ", paste(dim(assayData_63061), collapse = " x "))
 # ---- QC before normalization ----
 plot_boxplot(
   assayData_63060,
-  here("plots", "boxplot_GSE63060_before_normalization.png"),
+  here(plotsdir, "boxplot_GSE63060_before_normalization.png"),
   "GSE63060 before normalization"
 )
 
 plot_boxplot(
   assayData_63061,
-  here("plots", "boxplot_GSE63061_before_normalization.png"),
+  here(plotsdir, "boxplot_GSE63061_before_normalization.png"),
   "GSE63061 before normalization"
 )
 
 plot_density(
   assayData_63060,
-  here("plots", "density_GSE63060_before_normalization.png"),
+  here(plotsdir, "density_GSE63060_before_normalization.png"),
   "GSE63060 before normalization"
 )
 
 plot_density(
   assayData_63061,
-  here("plots", "density_GSE63061_before_normalization.png"),
+  here(plotsdir, "density_GSE63061_before_normalization.png"),
   "GSE63061 before normalization"
 )
 
@@ -221,25 +221,25 @@ assayNorm_63061 <- limma::normalizeBetweenArrays(assayData_63061, method = "quan
 # ---- QC after within-dataset normalization ----
 plot_boxplot(
   assayNorm_63060,
-  here("plots", "boxplot_GSE63060_after_quantile_normalization.png"),
+  here(plotsdir, "boxplot_GSE63060_after_quantile_normalization.png"),
   "GSE63060 after quantile normalization"
 )
 
 plot_boxplot(
   assayNorm_63061,
-  here("plots", "boxplot_GSE63061_after_quantile_normalization.png"),
+  here(plotsdir, "boxplot_GSE63061_after_quantile_normalization.png"),
   "GSE63061 after quantile normalization"
 )
 
 plot_density(
   assayNorm_63060,
-  here("plots", "density_GSE63060_after_quantile_normalization.png"),
+  here(plotsdir, "density_GSE63060_after_quantile_normalization.png"),
   "GSE63060 after quantile normalization"
 )
 
 plot_density(
   assayNorm_63061,
-  here("plots", "density_GSE63061_after_quantile_normalization.png"),
+  here(plotsdir, "density_GSE63061_after_quantile_normalization.png"),
   "GSE63061 after quantile normalization"
 )
 
@@ -295,7 +295,7 @@ rownames(featureData_merged) <- featureData_merged$SYMBOL
 plot_pca(
   mat = expr_merged_precombat,
   pheno = pheno_merged,
-  outfile = here("plots", "PCA_merged_before_ComBat_color_BATCH.png"),
+  outfile = here(plotsdir, "PCA_merged_before_ComBat_color_BATCH.png"),
   title_txt = "Merged data before ComBat",
   color_var = "BATCH",
   shape_var = "GROUP"
@@ -304,7 +304,7 @@ plot_pca(
 plot_pca(
   mat = expr_merged_precombat,
   pheno = pheno_merged,
-  outfile = here("plots", "PCA_merged_before_ComBat_color_GROUP.png"),
+  outfile = here(plotsdir, "PCA_merged_before_ComBat_color_GROUP.png"),
   title_txt = "Merged data before ComBat",
   color_var = "GROUP",
   shape_var = "BATCH"
@@ -361,7 +361,7 @@ if ("GROUP" %in% colnames(pheno_merged)) {
 plot_pca(
   mat = expr_merged_combat,
   pheno = pheno_merged_final,
-  outfile = here("plots", "PCA_merged_after_ComBat_color_BATCH.png"),
+  outfile = here(plotsdir, "PCA_merged_after_ComBat_color_BATCH.png"),
   title_txt = "Merged data after ComBat",
   color_var = "BATCH",
   shape_var = "GROUP"
@@ -370,7 +370,7 @@ plot_pca(
 plot_pca(
   mat = expr_merged_combat,
   pheno = pheno_merged_final,
-  outfile = here("plots", "PCA_merged_after_ComBat_color_GROUP.png"),
+  outfile = here(plotsdir, "PCA_merged_after_ComBat_color_GROUP.png"),
   title_txt = "Merged data after ComBat",
   color_var = "GROUP",
   shape_var = "BATCH"
@@ -378,71 +378,71 @@ plot_pca(
 
 plot_boxplot(
   expr_merged_precombat,
-  here("plots", "boxplot_merged_before_ComBat.png"),
+  here(plotsdir, "boxplot_merged_before_ComBat.png"),
   "Merged data before ComBat"
 )
 
 plot_boxplot(
   expr_merged_combat,
-  here("plots", "boxplot_merged_after_ComBat.png"),
+  here(plotsdir, "boxplot_merged_after_ComBat.png"),
   "Merged data after ComBat"
 )
 
 plot_density(
   expr_merged_precombat,
-  here("plots", "density_merged_before_ComBat.png"),
+  here(plotsdir, "density_merged_before_ComBat.png"),
   "Merged data before ComBat"
 )
 
 plot_density(
   expr_merged_combat,
-  here("plots", "density_merged_after_ComBat.png"),
+  here(plotsdir, "density_merged_after_ComBat.png"),
   "Merged data after ComBat"
 )
 
 # ---- save outputs ----
 message("Saving normalized and batch-corrected outputs...")
 
-saveRDS(assayNorm_63060, here("results", "assayData_63060_normalized.rds"))
-saveRDS(assayNorm_63061, here("results", "assayData_63061_normalized.rds"))
+saveRDS(assayNorm_63060, here(resultsdir, "assayData_63060_normalized.rds"))
+saveRDS(assayNorm_63061, here(resultsdir, "assayData_63061_normalized.rds"))
 
-saveRDS(exprGene_63060, here("results", "exprGene_63060_normalized.rds"))
-saveRDS(exprGene_63061, here("results", "exprGene_63061_normalized.rds"))
+saveRDS(exprGene_63060, here(resultsdir, "exprGene_63060_normalized.rds"))
+saveRDS(exprGene_63061, here(resultsdir, "exprGene_63061_normalized.rds"))
 
-saveRDS(expr_merged_precombat, here("results", "expr_merged_precombat.rds"))
-saveRDS(expr_merged_combat, here("results", "expr_merged_combat.rds"))
+saveRDS(expr_merged_precombat, here(resultsdir, "expr_merged_precombat.rds"))
+saveRDS(expr_merged_combat, here(resultsdir, "expr_merged_combat.rds"))
 
-saveRDS(pheno_merged_final, here("results", "pheno_merged.rds"))
-saveRDS(featureData_merged, here("results", "featureData_merged.rds"))
+saveRDS(pheno_merged_final, here(resultsdir, "pheno_merged.rds"))
+saveRDS(featureData_merged, here(resultsdir, "featureData_merged.rds"))
 
 rio::export(
   tibble::rownames_to_column(as.data.frame(exprGene_63060), "SYMBOL"),
-  here("results", "exprGene_63060_normalized.csv")
+  here(resultsdir, "exprGene_63060_normalized.csv")
 )
 
 rio::export(
   tibble::rownames_to_column(as.data.frame(exprGene_63061), "SYMBOL"),
-  here("results", "exprGene_63061_normalized.csv")
+  here(resultsdir, "exprGene_63061_normalized.csv")
 )
 
 rio::export(
   tibble::rownames_to_column(as.data.frame(expr_merged_precombat), "SYMBOL"),
-  here("results", "expr_merged_precombat.csv")
+  here(resultsdir, "expr_merged_precombat.csv")
 )
 
 rio::export(
   tibble::rownames_to_column(as.data.frame(expr_merged_combat), "SYMBOL"),
-  here("results", "expr_merged_combat.csv")
+  here(resultsdir, "expr_merged_combat.csv")
 )
 
 rio::export(
   tibble::rownames_to_column(pheno_merged_final, "SAMPLEID"),
-  here("results", "pheno_merged.csv")
+  here(resultsdir, "pheno_merged.csv")
 )
 
 rio::export(
   featureData_merged,
-  here("results", "featureData_merged.csv")
+  here(resultsdir, "featureData_merged.csv")
 )
 
 # ---- summary table ----
@@ -474,7 +474,7 @@ summary_tbl <- data.frame(
   stringsAsFactors = FALSE
 )
 
-rio::export(summary_tbl, here("results", "normalization_summary.csv"))
+rio::export(summary_tbl, here(resultsdir, "normalization_summary.csv"))
 
 message("Finished 03_normalization.R")
 message("Main final object for downstream analysis: results/expr_merged_combat.rds")

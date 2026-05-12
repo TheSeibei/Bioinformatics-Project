@@ -15,8 +15,8 @@ datadir <- here("data")
 resultsdir <- here("results")
 
 # ---- load assay data ----
-assayData_63060 <- readRDS(here("results", "assayData_63060_raw.rds"))
-assayData_63061 <- readRDS(here("results", "assayData_63061_raw.rds"))
+assayData_63060 <- readRDS(here(resultsdir, "assayData_63060_raw.rds"))
+assayData_63061 <- readRDS(here(resultsdir, "assayData_63061_raw.rds"))
 
 # ---- download/load GPL annotation ----
 message("Downloading GPL annotation tables...")
@@ -115,20 +115,20 @@ featureData_63060 <- featureData_63060[keep_63060, ]
 featureData_63061 <- featureData_63061[keep_63061, ]
 
 # ---- save outputs ----
-saveRDS(featureData_63060, here("results", "featureData_63060.rds"))
-saveRDS(featureData_63061, here("results", "featureData_63061.rds"))
+saveRDS(featureData_63060, here(resultsdir, "featureData_63060.rds"))
+saveRDS(featureData_63061, here(resultsdir, "featureData_63061.rds"))
 
-saveRDS(assayData_63060, here("results", "assayData_63060_annotated.rds"))
-saveRDS(assayData_63061, here("results", "assayData_63061_annotated.rds"))
+saveRDS(assayData_63060, here(resultsdir, "assayData_63060_annotated.rds"))
+saveRDS(assayData_63061, here(resultsdir, "assayData_63061_annotated.rds"))
 
 rio::export(
   tibble::rownames_to_column(featureData_63060, "FEATUREID"),
-  here("results", "featureData_63060.csv")
+  here(resultsdir, "featureData_63060.csv")
 )
 
 rio::export(
   tibble::rownames_to_column(featureData_63061, "FEATUREID"),
-  here("results", "featureData_63061.csv")
+  here(resultsdir, "featureData_63061.csv")
 )
 
 message("Finished 02_feature_annotation.R")
