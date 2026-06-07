@@ -8,7 +8,7 @@ if (!requireNamespace("here", quietly = TRUE)) {
 }
 library(here)
 
-required_pkgs <- c("limma", "dplyr", "tibble", "rio", "ggplot2")
+required_pkgs <- c("limma", "dplyr", "tibble", "rio", "ggplot2", "ggrepel")
 for (pkg in required_pkgs) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     if (pkg %in% c("limma")) {
@@ -44,7 +44,8 @@ safe_filename <- function(x) {
 }
 
 plot_volcano <- function(tt, outfile, title_txt, p_cutoff = 0.05,
-                         xlim = NULL, ylim = NULL) {
+                         xlim = NULL, ylim = NULL,
+                         label_genes = NULL, label_n = 2) {
   df <- tt
   
   if (!"SYMBOL" %in% colnames(df)) {
@@ -78,6 +79,15 @@ plot_volcano <- function(tt, outfile, title_txt, p_cutoff = 0.05,
     -log10(p_cutoff)
   }
   
+  # Zu beschriftende Gene: entweder explizit per label_genes vorgegeben,
+  # sonst die label_n signifikantesten (kleinstes adj.P.Val) dieses Kontrasts.
+  if (!is.null(label_genes)) {
+    lab_df <- df[df$SYMBOL %in% label_genes, , drop = FALSE]
+  } else {
+    lab_df <- df[order(df$adj.P.Val), , drop = FALSE]
+    lab_df <- head(lab_df, label_n)
+  }
+  
   p <- ggplot(df, aes(x = logFC, y = negLog10P, color = status)) +
     geom_point(alpha = 0.7, size = 1.6) +
     geom_hline(yintercept = y_line, linetype = "dashed") +
@@ -94,6 +104,24 @@ plot_volcano <- function(tt, outfile, title_txt, p_cutoff = 0.05,
       caption = paste0("gestrichelte Linie: FDR < ", p_cutoff)
     ) +
     theme_bw(base_size = 12)
+  
+  # Gen-Labels (mit Verbindungslinien, schwarz, ohne Legendeneintrag)
+  if (nrow(lab_df) > 0) {
+    p <- p +
+      ggrepel::geom_text_repel(
+        data = lab_df,
+        aes(x = logFC, y = negLog10P, label = SYMBOL),
+        inherit.aes = FALSE,
+        color = "black",
+        size = 3.5,
+        fontface = "bold",
+        box.padding = 0.6,
+        point.padding = 0.3,
+        min.segment.length = 0,
+        max.overlaps = Inf,
+        seed = 42
+      )
+  }
   
   # Synchrone Achsen ueber alle Kontraste hinweg (coord_cartesian schneidet
   # nur die Ansicht zu, verwirft aber keine Punkte).
@@ -159,7 +187,8 @@ plot_heatmap_base <- function(mat, pheno, genes, outfile, title_txt, z_cap = 2.5
 
 run_one_contrast <- function(fit2, coef_name, expr_mat, pheno, out_prefix,
                              p_cutoff = 0.05, lfc_cutoff = 1,
-                             volcano_xlim = NULL, volcano_ylim = NULL) {
+                             volcano_xlim = NULL, volcano_ylim = NULL,
+                             volcano_label_genes = NULL, volcano_label_n = 2) {
   message("Running contrast: ", coef_name)
   
   tt <- limma::topTable(
@@ -199,7 +228,9 @@ run_one_contrast <- function(fit2, coef_name, expr_mat, pheno, out_prefix,
     title_txt = paste0("Differential expression: ", coef_name),
     p_cutoff = p_cutoff,
     xlim = volcano_xlim,
-    ylim = volcano_ylim
+    ylim = volcano_ylim,
+    label_genes = volcano_label_genes,
+    label_n = volcano_label_n
   )
   
   top_heatmap_genes <- tt %>%
@@ -309,6 +340,15 @@ volcano_ylim <- c(0, max(global_negLog10P, na.rm = TRUE))
 message("Shared volcano x-limits: ", paste(round(volcano_xlim, 3), collapse = " ... "))
 message("Shared volcano y-limits: ", paste(round(volcano_ylim, 3), collapse = " ... "))
 
+# Feste Gene, die in ALLEN Volcano-Plots beschriftet werden, damit man
+# dieselben Gene ueber die Kontraste hinweg wiederfindet und ihre
+# Verschiebung vergleichen kann. Ein Gen pro Pathview-Karte, eindeutig
+# zugeordnet:
+#   NDUFA1 = Oxidative phosphorylation (hsa00190), Atmungskette Komplex I
+#   PSMA3  = Alzheimer disease (hsa05010), Proteasom-Arm -- liegt NICHT in
+#            hsa00190, daher eindeutig der Alzheimer-Karte zuzuordnen.
+volcano_label_genes <- c("NDUFA1", "PSMA3")
+
 res_ad_vs_control <- run_one_contrast(
   fit2 = fit2,
   coef_name = "AD_vs_CONTROL",
@@ -316,7 +356,8 @@ res_ad_vs_control <- run_one_contrast(
   pheno = pheno_merged,
   out_prefix = "AD_vs_CONTROL",
   volcano_xlim = volcano_xlim,
-  volcano_ylim = volcano_ylim
+  volcano_ylim = volcano_ylim,
+  volcano_label_genes = volcano_label_genes
 )
 
 res_mci_vs_control <- run_one_contrast(
@@ -326,7 +367,8 @@ res_mci_vs_control <- run_one_contrast(
   pheno = pheno_merged,
   out_prefix = "MCI_vs_CONTROL",
   volcano_xlim = volcano_xlim,
-  volcano_ylim = volcano_ylim
+  volcano_ylim = volcano_ylim,
+  volcano_label_genes = volcano_label_genes
 )
 
 res_ad_vs_mci <- run_one_contrast(
@@ -336,7 +378,8 @@ res_ad_vs_mci <- run_one_contrast(
   pheno = pheno_merged,
   out_prefix = "AD_vs_MCI",
   volcano_xlim = volcano_xlim,
-  volcano_ylim = volcano_ylim
+  volcano_ylim = volcano_ylim,
+  volcano_label_genes = volcano_label_genes
 )
 
 # ---- summary table ----
