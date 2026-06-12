@@ -418,5 +418,26 @@ write_ranked_list(res_ad_vs_control, here(resultsdir, "ranked_AD_vs_CONTROL_tsta
 write_ranked_list(res_mci_vs_control, here(resultsdir, "ranked_MCI_vs_CONTROL_tstat.csv"))
 write_ranked_list(res_ad_vs_mci, here(resultsdir, "ranked_AD_vs_MCI_tstat.csv"))
 
+library(here)
+
+# Ergebnisse laden
+res_ad_ctrl  <- readRDS(here("results", "DEG_AD_vs_CONTROL_all.rds"))
+res_mci_ctrl <- readRDS(here("results", "DEG_MCI_vs_CONTROL_all.rds"))
+res_ad_mci   <- readRDS(here("results", "DEG_AD_vs_MCI_all.rds"))
+
+# Funktion zum Zählen
+count_de <- function(df, p_cutoff = 0.05) {
+  sig <- df[df$adj.P.Val < p_cutoff, ]
+  up   <- sum(sig$logFC > 0)
+  down <- sum(sig$logFC < 0)
+  cat("  hochreguliert: ", up, "\n")
+  cat("  runterreguliert:", down, "\n")
+  cat("  gesamt:         ", up + down, "\n\n")
+}
+
+cat("AD_vs_CONTROL:\n");  count_de(res_ad_ctrl)
+cat("MCI_vs_CONTROL:\n"); count_de(res_mci_ctrl)
+cat("AD_vs_MCI:\n");      count_de(res_ad_mci)
+
 message("Finished 04_differential_expression.R")
 message("Outputs saved in results/ and plots/")
